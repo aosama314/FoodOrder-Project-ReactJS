@@ -1,13 +1,13 @@
 import React from "react";
+import CartButton from "../../../Cart/CartButton/CartButton";
 
-import Button from "../Button/Button";
 import classes from "./Head.module.css";
 
 const Head = (props) => {
   return (
     <header className={classes.header}>
       <h1>{props.headerLabel}</h1>
-      <Button />
+      <CartButton onClick={props.onClick} />
     </header>
   );
 };
