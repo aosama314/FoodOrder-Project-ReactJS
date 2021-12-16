@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useInput from "../../../hooks/use-input";
 import classes from "./Checkout.module.css";
 
 const checkEmpty = (value) => value.trim() === "";
@@ -25,92 +26,174 @@ const validateEmail = (emailAddress) => {
 
 const Checkout = (props) => {
   //#region Name Input Logic
-  const [name, setName] = useState("");
-  const [nameIsTouched, setNameIsTouched] = useState(false);
-  const nameInValid = checkEmpty(name) && nameIsTouched;
+  //#region Using useState() hook
+  // const [name, setName] = useState("");
+  // const [nameIsTouched, setNameIsTouched] = useState(false);
+  // const nameInValid = checkEmpty(name) && nameIsTouched;
 
-  const nameChangeHandler = (event) => {
-    setName(event.target.value);
-  };
+  // const nameChangeHandler = (event) => {
+  //   setName(event.target.value);
+  // };
 
-  const nameBlurHandler = (event) => {
-    setNameIsTouched(true);
-  };
+  // const nameBlurHandler = (event) => {
+  //   setNameIsTouched(true);
+  // };
+  //#endregion
 
-  const nameClasses = nameInValid
+  //#region Using Custom Hook useInput() hook
+  const {
+    value: name,
+    hasError: nameHasError,
+    changeHandler: nameChangeHandler,
+    blurHandler: nameBlurHandler,
+    IsValid: nameIsValid,
+    reset: resetName,
+  } = useInput((name) => !checkEmpty(name));
+  //#endregion
+
+  const nameClasses = nameHasError
     ? classes.control + " " + classes.invalid
     : classes.control;
+
   //#endregion
 
   //#region Email Input Logic
-  const [email, setEmail] = useState("");
-  const [emailIsTouched, setEmailIsTouched] = useState(false);
-  const checkEmailValidity = validateEmail(email);
-  const emailInValid = !checkEmailValidity.valid && emailIsTouched;
 
-  const emailChangeHandler = (event) => {
-    setEmail(event.target.value);
-  };
+  //#region Using useState() hook
+  // const [email, setEmail] = useState("");
+  // const [emailIsTouched, setEmailIsTouched] = useState(false);
+  // let checkEmailValidity = validateEmail(email);
+  // const emailInValid = !checkEmailValidity.valid && emailIsTouched;
 
-  const emailBlurHandler = (event) => {
-    setEmailIsTouched(true);
-  };
+  // const emailChangeHandler = (event) => {
+  //   setEmail(event.target.value);
+  // };
 
-  const emailClasses = emailInValid
+  // const emailBlurHandler = (event) => {
+  //   setEmailIsTouched(true);
+  // };
+  //#endregion
+  //#region Using Custom Hook useInput() hook
+  let checkEmailValidity = { valid: false, errorMessage: "" };
+  const {
+    value: email,
+    hasError: emailHasError,
+    IsValid: emailIsValid,
+    reset: resetEmail,
+    changeHandler: emailChangeHandler,
+    blurHandler: emailBlurHandler,
+  } = useInput((email) => {
+    if (!checkEmpty(email)) {
+      const validDomains = /@gmail|@yahoo|@vodafone\.com$/;
+      // /@gmail|@yahoo|@vodafone|@hotmail\.com$/
+      let validOrNot = String(email)
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+      if (validOrNot) {
+        if (validDomains.test(email)) {
+          checkEmailValidity = { valid: true, errorMessage: "" };
+          return true;
+        }
+        checkEmailValidity = {
+          valid: false,
+          errorMessage: "Please enter valid domain!",
+        };
+        return false;
+      }
+      checkEmailValidity = {
+        valid: false,
+        errorMessage: "Please enter valid email!",
+      };
+      return false;
+    }
+    checkEmailValidity = { valid: false, errorMessage: "Email is required!" };
+    return false;
+  });
+  //#endregion
+  const emailClasses = emailHasError
     ? classes.control + " " + classes.invalid
     : classes.control;
   //#endregion
 
   //#region Street
-  const [street, setStreet] = useState("");
-  const [streetIsTouched, setStreetIsTouched] = useState(false);
-  const streetInValid = checkEmpty(street) && streetIsTouched;
+  // const [street, setStreet] = useState("");
+  // const [streetIsTouched, setStreetIsTouched] = useState(false);
+  // const streetInValid = checkEmpty(street) && streetIsTouched;
 
-  const streetChangeHandler = (event) => {
-    setStreet(event.target.value);
-  };
+  // const streetChangeHandler = (event) => {
+  //   setStreet(event.target.value);
+  // };
 
-  const streetBlurHandler = (event) => {
-    setStreetIsTouched(true);
-  };
+  // const streetBlurHandler = (event) => {
+  //   setStreetIsTouched(true);
+  // };
 
-  const streetClasses = streetInValid
+  const {
+    value: street,
+    hasError: streetHasError,
+    changeHandler: streetChangeHandler,
+    blurHandler: streetBlurHandler,
+    IsValid: streetIsValid,
+    reset: resetStreet,
+  } = useInput((street) => !checkEmpty(street));
+
+  const streetClasses = streetHasError
     ? classes.control + " " + classes.invalid
     : classes.control;
   //#endregion
 
   //#region PostalCode
-  const [postalCode, setPostalCode] = useState("");
-  const [postalCodeIsTouched, setPostaCodeIsTouched] = useState(false);
-  const postalCodeInValid = checkEmpty(postalCode) && postalCodeIsTouched;
+  // const [postalCode, setPostalCode] = useState("");
+  // const [postalCodeIsTouched, setPostalCodeIsTouched] = useState(false);
+  // const postalCodeInValid = checkEmpty(postalCode) && postalCodeIsTouched;
 
-  const postalCodeChangeHandler = (event) => {
-    setPostalCode(event.target.value);
-  };
+  // const postalCodeChangeHandler = (event) => {
+  //   setPostalCode(event.target.value);
+  // };
 
-  const postalCodeBlurHandler = (event) => {
-    setPostaCodeIsTouched(true);
-  };
+  // const postalCodeBlurHandler = (event) => {
+  //   setPostalCodeIsTouched(true);
+  // };
 
-  const postalCodeClasses = postalCodeInValid
+  const {
+    value: postalCode,
+    IsValid: postalCodeIsValid,
+    changeHandler: postalCodeChangeHandler,
+    blurHandler: postalCodeBlurHandler,
+    hasError: postalCodeHasError,
+    reset: resetPostalCode,
+  } = useInput((postalCode) => !checkEmpty(postalCode));
+
+  const postalCodeClasses = postalCodeHasError
     ? classes.control + " " + classes.invalid
     : classes.control;
   //#endregion
 
   //#region City
-  const [city, setCity] = useState("");
-  const [cityIsTouched, setCityIsTouched] = useState(false);
-  const cityInValid = checkEmpty(city) && cityIsTouched;
+  // const [city, setCity] = useState("");
+  // const [cityIsTouched, setCityIsTouched] = useState(false);
+  // const cityInValid = checkEmpty(city) && cityIsTouched;
 
-  const cityChangeHandler = (event) => {
-    setCity(event.target.value);
-  };
+  // const cityChangeHandler = (event) => {
+  //   setCity(event.target.value);
+  // };
 
-  const cityBlurHandler = (event) => {
-    setCityIsTouched(true);
-  };
+  // const cityBlurHandler = (event) => {
+  //   setCityIsTouched(true);
+  // };
 
-  const cityClasses = cityInValid
+  const {
+    value: city,
+    IsValid: cityIsValid,
+    hasError: cityHasError,
+    blurHandler: cityBlurHandler,
+    changeHandler: cityChangeHandler,
+    reset: resetCity,
+  } = useInput((city) => !checkEmpty(city));
+
+  const cityClasses = cityHasError
     ? classes.control + " " + classes.invalid
     : classes.control;
   //#endregion
@@ -118,11 +201,11 @@ const Checkout = (props) => {
   //#region Validate The Whole Form
   let formIsValid = false;
   if (
-    !nameInValid &&
-    !emailInValid &&
-    !postalCodeInValid &&
-    !cityInValid &&
-    !streetInValid
+    !nameHasError &&
+    !emailHasError &&
+    !postalCodeHasError &&
+    !cityHasError &&
+    !streetHasError
   ) {
     formIsValid = true;
   }
@@ -139,6 +222,11 @@ const Checkout = (props) => {
         postalCode,
         email,
       });
+      resetCity();
+      resetName();
+      resetPostalCode();
+      resetEmail();
+      resetStreet();
     }
   };
 
@@ -153,7 +241,7 @@ const Checkout = (props) => {
           onChange={nameChangeHandler}
           onBlur={nameBlurHandler}
         />
-        {nameInValid && (
+        {nameHasError && (
           <label className={classes.invalid}>Name is required!</label>
         )}
       </div>
@@ -166,7 +254,7 @@ const Checkout = (props) => {
           onChange={emailChangeHandler}
           onBlur={emailBlurHandler}
         />
-        {emailInValid && (
+        {emailHasError && (
           <label className={classes.invalid}>
             {checkEmailValidity.errorMessage}
           </label>
@@ -181,7 +269,7 @@ const Checkout = (props) => {
           onChange={streetChangeHandler}
           onBlur={streetBlurHandler}
         />
-        {streetInValid && (
+        {streetHasError && (
           <label className={classes.invalid}>Street is required!</label>
         )}
       </div>
@@ -194,7 +282,7 @@ const Checkout = (props) => {
           onChange={postalCodeChangeHandler}
           onBlur={postalCodeBlurHandler}
         />
-        {postalCodeInValid && (
+        {postalCodeHasError && (
           <label className={classes.invalid}>Postal Code is required!</label>
         )}
       </div>
@@ -207,7 +295,7 @@ const Checkout = (props) => {
           onChange={cityChangeHandler}
           onBlur={cityBlurHandler}
         />
-        {cityInValid && (
+        {cityHasError && (
           <label className={classes.invalid}>City is required!</label>
         )}
       </div>
